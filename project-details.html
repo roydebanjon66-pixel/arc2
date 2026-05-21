@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Luxe Apartments | Monolith Architecture</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500&family=Playfair+Display:wght@400;600;700&family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{--green:#0F3D2E;--green-glow:#1B5E4A;--black:#0B0B0B;--white:#F5F5F2;--gold:#C8A96B;--font-serif:'Playfair Display',serif;--font-sans:'Inter',sans-serif;--font-ui:'Poppins',sans-serif;--glow-emerald:0 0 25px rgba(27, 94, 74, 0.45);--glow-gold:0 0 25px rgba(200, 169, 107, 0.35)}
+html,body{width:100%;background:var(--black);color:var(--white);font-family:var(--font-sans);overflow-x:hidden;-webkit-font-smoothing:antialiased}
+#loader{position:fixed;inset:0;z-index:9999;background:var(--black);display:flex;align-items:center;justify-content:center;transition:opacity .8s ease}
+#loader .brand{font-family:var(--font-serif);font-size:2.5rem;letter-spacing:8px;color:var(--gold);animation:brandPulse 1.4s ease-in-out infinite}
+@keyframes brandPulse{0%,100%{opacity:.4;text-shadow:0 0 10px rgba(200,169,107,.2)}50%{opacity:1;text-shadow:0 0 40px rgba(200,169,107,.7)}}
+nav{position:fixed;top:0;left:0;width:100%;padding:28px 5%;display:flex;align-items:center;justify-content:space-between;z-index:500;transition:all .5s ease}
+nav.solid{padding:18px 5%;background:rgba(11,11,11,.88);backdrop-filter:blur(18px);border-bottom:1px solid rgba(255,255,255,.04)}
+.nav-logo{font-family:var(--font-serif);font-size:1.7rem;letter-spacing:3px;text-transform:uppercase;color:var(--white);text-decoration:none}
+.nav-links{display:flex;gap:36px;list-style:none}
+.nav-links a{font-family:var(--font-ui);font-size:.8rem;letter-spacing:1.5px;text-transform:uppercase;color:rgba(245,245,242,.75);text-decoration:none;position:relative;transition:color .3s}
+.nav-links a:hover,.nav-links a.active{color:var(--gold)}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;width:0;height:1px;background:var(--gold);transition:width .3s}
+.nav-links a:hover::after,.nav-links a.active::after{width:100%}
+.nav-cta{padding:12px 24px;border:1px solid var(--gold);color:var(--white);background:transparent;font-family:var(--font-ui);font-size:.8rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all .3s}
+.nav-cta:hover{background:rgba(200,169,107,.1);box-shadow:var(--glow-gold)}
+/* Cinematic Hero */
+.project-hero{height:90vh;position:relative;overflow:hidden}
+.project-hero img{width:100%;height:100%;object-fit:cover;display:block}
+.project-hero-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(11,11,11,1) 0%,rgba(11,11,11,.5) 40%,rgba(15,61,46,.2) 100%)}
+.project-hero-content{position:absolute;bottom:60px;left:6%;right:6%;z-index:2;display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:30px}
+.project-hero-left{max-width:700px}
+.project-breadcrumb{font-family:var(--font-ui);font-size:.72rem;letter-spacing:3px;text-transform:uppercase;color:rgba(200,169,107,.7);margin-bottom:14px}
+.project-hero h1{font-family:var(--font-serif);font-size:clamp(3rem,6vw,5.5rem);line-height:1.08;animation:fadeUp .9s .3s both}
+.project-hero-right{text-align:right}
+.project-hero-right .location{font-family:var(--font-ui);font-size:.85rem;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.6);margin-bottom:8px}
+.project-hero-right .category{display:inline-block;padding:7px 18px;border:1px solid rgba(200,169,107,.35);color:rgba(200,169,107,.8);font-family:var(--font-ui);font-size:.7rem;letter-spacing:2px;text-transform:uppercase}
+@keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
+/* Meta Bar */
+.meta-bar{display:grid;grid-template-columns:repeat(4,1fr);gap:0;border-top:1px solid rgba(255,255,255,.06);border-bottom:1px solid rgba(255,255,255,.06)}
+.meta-item{padding:36px 40px;border-right:1px solid rgba(255,255,255,.06)}
+.meta-item:last-child{border-right:none}
+.meta-label{font-family:var(--font-ui);font-size:.68rem;letter-spacing:3px;text-transform:uppercase;color:rgba(255,255,255,.35);margin-bottom:10px}
+.meta-value{font-family:var(--font-serif);font-size:1.3rem}
+/* Content Sections */
+.content-section{padding:100px 6%}
+.content-grid{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}
+.content-eyebrow{font-family:var(--font-ui);font-size:.72rem;letter-spacing:4px;text-transform:uppercase;color:var(--gold);margin-bottom:14px;opacity:.8}
+.content-section h2{font-family:var(--font-serif);font-size:clamp(2rem,3.5vw,3rem);margin-bottom:28px}
+.content-section p{font-size:1.05rem;line-height:1.85;color:rgba(255,255,255,.72);margin-bottom:20px}
+.content-section img{width:100%;border-radius:16px;object-fit:cover}
+/* Gallery */
+.gallery-section{padding:0 6% 100px}
+.gallery-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.gallery-grid .gallery-wide{grid-column:span 2}
+.gallery-grid img{width:100%;height:380px;object-fit:cover;border-radius:14px;transition:transform 1.2s cubic-bezier(.16,1,.3,1)}
+.gallery-grid img:hover{transform:scale(1.03)}
+/* Stats Band */
+.stats-band{background:linear-gradient(135deg,#071A13 0%,#0B0B0B 100%);border-top:1px solid rgba(27,94,74,0.15);border-bottom:1px solid rgba(27,94,74,0.15);padding:70px 6%;display:flex;justify-content:space-around;flex-wrap:wrap;gap:40px;text-align:center}
+.stat-num{font-family:var(--font-serif);font-size:clamp(2.5rem,5vw,4rem);color:var(--gold);display:block}
+.stat-label{font-family:var(--font-ui);font-size:.75rem;letter-spacing:2.5px;text-transform:uppercase;color:rgba(255,255,255,.5);margin-top:6px}
+/* Timeline */
+.timeline-section{padding:100px 6%;background:rgba(255,255,255,.01);border-top:1px solid rgba(255,255,255,.05)}
+.timeline-section h2{font-family:var(--font-serif);font-size:2.8rem;margin-bottom:60px}
+.timeline{position:relative;padding-left:40px}
+.timeline::before{content:'';position:absolute;left:0;top:0;bottom:0;width:1px;background:linear-gradient(to bottom,var(--gold),transparent)}
+.timeline-item{position:relative;padding:0 0 50px 40px}
+.timeline-dot{position:absolute;left:-6px;top:6px;width:13px;height:13px;border-radius:50%;background:var(--gold);box-shadow:var(--glow-gold)}
+.timeline-item h4{font-family:var(--font-serif);font-size:1.4rem;margin-bottom:8px}
+.timeline-item p{color:rgba(255,255,255,.6);line-height:1.7;font-size:.92rem}
+.timeline-date{font-family:var(--font-ui);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold);margin-bottom:8px}
+/* CTA */
+.project-cta{text-align:center;padding:100px 6%;background:linear-gradient(135deg,#071A13 0%,#0B0B0B 100%);border-top:1px solid rgba(27,94,74,0.15);position:relative;overflow:hidden}
+.project-cta::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at center,rgba(27,94,74,0.22) 0%,transparent 65%);pointer-events:none}
+.project-cta h2{font-family:var(--font-serif);font-size:clamp(2rem,4vw,3.5rem);margin-bottom:40px;position:relative;z-index:1}
+.project-cta .btn-row{display:flex;justify-content:center;gap:16px;position:relative;z-index:1;flex-wrap:wrap}
+.btn-gold{padding:15px 34px;border:1px solid var(--gold);color:var(--white);background:transparent;font-family:var(--font-ui);font-size:.82rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all .4s ease;display:inline-block}
+.btn-gold:hover{background:rgba(200,169,107,.1);box-shadow:var(--glow-gold)}
+.btn-solid{padding:15px 34px;border:none;color:var(--black);background:var(--white);font-family:var(--font-ui);font-size:.82rem;letter-spacing:1.5px;text-transform:uppercase;cursor:pointer;text-decoration:none;transition:all .4s;display:inline-block}
+.btn-solid:hover{background:var(--gold)}
+/* Reveal */
+.reveal{opacity:0;transform:translateY(40px);transition:all .9s ease}.reveal.visible{opacity:1;transform:translateY(0)}
+/* Footer */
+footer{background:#060606;padding:70px 6% 36px;border-top:1px solid rgba(255,255,255,.05)}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:60px;margin-bottom:50px}
+.footer-brand .brand-name{font-family:var(--font-serif);font-size:1.8rem;letter-spacing:2px;text-transform:uppercase;display:block;margin-bottom:18px}
+.footer-brand p{font-family:var(--font-serif);font-size:1.4rem;color:rgba(255,255,255,.6);max-width:340px;line-height:1.5}
+.footer-col h4{font-family:var(--font-ui);font-size:.72rem;letter-spacing:2.5px;text-transform:uppercase;color:var(--gold);margin-bottom:22px}
+.footer-col ul{list-style:none}.footer-col li{margin-bottom:12px}
+.footer-col a{color:rgba(255,255,255,.5);text-decoration:none;font-size:.88rem;transition:all .3s}
+.footer-col a:hover{color:var(--white);padding-left:5px}
+.footer-bottom{border-top:1px solid rgba(255,255,255,.07);padding-top:26px;display:flex;justify-content:space-between;font-family:var(--font-ui);font-size:.75rem;color:rgba(255,255,255,.35);flex-wrap:wrap;gap:12px}
+.footer-socials{display:flex;gap:18px}
+.footer-socials a{color:rgba(255,255,255,.35);text-decoration:none;transition:color .3s}
+.footer-socials a:hover{color:var(--gold)}
+::-webkit-scrollbar{width:8px}::-webkit-scrollbar-track{background:var(--black)}::-webkit-scrollbar-thumb{background:var(--green);border-radius:4px}::-webkit-scrollbar-thumb:hover{background:var(--green-glow)}
+@media(max-width:1024px){.meta-bar{grid-template-columns:1fr 1fr}.meta-item:nth-child(2){border-right:none}.meta-item:nth-child(3){border-top:1px solid rgba(255,255,255,.06)}.content-grid{grid-template-columns:1fr;gap:40px}.gallery-grid{grid-template-columns:1fr 1fr}.gallery-grid .gallery-wide{grid-column:1/-1}.footer-grid{grid-template-columns:1fr 1fr}}
+@media(max-width:768px){.nav-links{display:none}.project-hero{height:70vh}.meta-bar{grid-template-columns:1fr 1fr}.gallery-grid{grid-template-columns:1fr}.gallery-grid .gallery-wide{grid-column:1}.footer-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div id="loader"><div class="brand">MONOLITH.</div></div>
+<nav id="main-nav">
+  <a href="index.html" class="nav-logo">Monolith.</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="projects.html" class="active">Projects</a></li>
+    <li><a href="services.html">Services</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+  <a href="contact.html" class="nav-cta">Schedule Meeting</a>
+</nav>
+
+<!-- Cinematic Hero -->
+<section class="project-hero">
+  <img src="assets/images/Screenshot 2026-05-20 163623.png" alt="Luxe Apartments">
+  <div class="project-hero-overlay"></div>
+  <div class="project-hero-content">
+    <div class="project-hero-left">
+      <div class="project-breadcrumb">Portfolio &nbsp;/&nbsp; Residential</div>
+      <h1>Luxe Apartments</h1>
+    </div>
+    <div class="project-hero-right">
+      <div class="location">Singapore, SG</div>
+      <span class="category">Luxury Residential</span>
+    </div>
+  </div>
+</section>
+
+<!-- Meta Bar -->
+<div class="meta-bar">
+  <div class="meta-item"><div class="meta-label">Client</div><div class="meta-value">Ascent Real Estate</div></div>
+  <div class="meta-item"><div class="meta-label">Total Area</div><div class="meta-value">45,000 sq ft</div></div>
+  <div class="meta-item"><div class="meta-label">Completed</div><div class="meta-value">2025</div></div>
+  <div class="meta-item"><div class="meta-label">Lead Architect</div><div class="meta-value">Elena Rostova</div></div>
+</div>
+
+<!-- Architectural Philosophy -->
+<section class="content-section">
+  <div class="content-grid">
+    <div class="reveal">
+      <div class="content-eyebrow">Architectural Vision</div>
+      <h2>Modern Living, Elevated</h2>
+      <p>Luxe Apartments was conceived as an oasis amidst the bustling cityscape of Singapore. The structure integrates biophilic design principles, blending luxury residential spaces with lush vertical gardens and smart-glass technology.</p>
+      <p>The facade adapts to the tropical climate, minimizing thermal gain while maximising natural diffused light, creating interiors that feel both expansive and intimately connected to nature.</p>
+    </div>
+    <div class="reveal">
+      <img src="assets/images/Screenshot 2026-05-20 163634.png" alt="Interior Detail" style="height:480px">
+    </div>
+  </div>
+</section>
+
+<!-- Stats -->
+<div class="stats-band">
+  <div><span class="stat-num">32</span><span class="stat-label">Luxury Units</span></div>
+  <div><span class="stat-num">18</span><span class="stat-label">Months Build</span></div>
+  <div><span class="stat-num">4</span><span class="stat-label">Design Awards</span></div>
+  <div><span class="stat-num">98%</span><span class="stat-label">Client Satisfaction</span></div>
+</div>
+
+<!-- Gallery -->
+<section class="gallery-section" style="padding-top:80px">
+  <div class="gallery-grid">
+    <img src="assets/images/Screenshot 2026-05-20 163644.png" alt="Gallery 1" class="gallery-wide reveal">
+    <img src="assets/images/Screenshot 2026-05-20 163654.png" alt="Gallery 2" class="reveal">
+    <img src="assets/images/Screenshot 2026-05-20 163706.png" alt="Gallery 3" class="reveal">
+    <img src="assets/images/Screenshot 2026-05-20 163717.png" alt="Gallery 4" class="gallery-wide reveal">
+  </div>
+</section>
+
+<!-- Timeline -->
+<section class="timeline-section">
+  <h2 class="reveal">Project Timeline</h2>
+  <div class="timeline">
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-date">Jan 2024</div>
+      <h4>Discovery & Site Analysis</h4>
+      <p>Comprehensive site surveys, climate analysis, and client vision workshops to define the project's architectural DNA.</p>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-date">Apr 2024</div>
+      <h4>Concept & Schematic Design</h4>
+      <p>Development of initial spatial concepts, facade studies, and structural engineering collaboration.</p>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-date">Aug 2024</div>
+      <h4>Construction Documentation</h4>
+      <p>Full technical blueprints, material schedules, and contractor procurement with international standards compliance.</p>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-dot"></div>
+      <div class="timeline-date">Mar 2025</div>
+      <h4>Handover & Completion</h4>
+      <p>Quality assurance, final inspections, and a premium client handover ceremony marking the project's completion.</p>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="project-cta">
+  <h2>Ready to Realise Your Vision?</h2>
+  <div class="btn-row">
+    <a href="contact.html" class="btn-solid">Book Consultation</a>
+    <a href="projects.html" class="btn-gold">View More Projects</a>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-grid">
+    <div class="footer-brand"><span class="brand-name">Monolith.</span><p>"Architecture is a visual art, and the buildings speak for themselves."</p></div>
+    <div class="footer-col"><h4>Navigation</h4><ul><li><a href="index.html">Home</a></li><li><a href="projects.html">Portfolio</a></li><li><a href="services.html">Services</a></li><li><a href="about.html">About</a></li></ul></div>
+    <div class="footer-col"><h4>Contact</h4><ul><li><a href="mailto:contact@monolitharch.com">contact@monolitharch.com</a></li><li><a href="#">+1 (555) 123-4567</a></li><li><a href="#">100 Design Avenue, NY</a></li></ul></div>
+  </div>
+  <div class="footer-bottom"><p>&copy; 2026 Monolith Architecture.</p><div class="footer-socials"><a href="#">Instagram</a><a href="#">LinkedIn</a><a href="#">Twitter</a></div></div>
+</footer>
+
+<script>
+window.addEventListener('load',()=>{const l=document.getElementById('loader');setTimeout(()=>{l.style.opacity='0';setTimeout(()=>l.remove(),800)},600)});
+const nav=document.getElementById('main-nav');window.addEventListener('scroll',()=>nav.classList.toggle('solid',scrollY>60),{passive:true});
+const revEls=document.querySelectorAll('.reveal');const rio=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');rio.unobserve(e.target)}})},{threshold:.12});revEls.forEach(el=>rio.observe(el));
+</script>
+</body>
+</html>
